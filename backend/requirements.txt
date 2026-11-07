@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+python-multipart
+aiofiles
+langdetect
+chromadb
+sentence-transformers
+PyMuPDF
+beautifulsoup4
+requests
+httpx

@@ -1,0 +1,22 @@
+{
+  "id": "desdemona",
+  "name": "Desdemona",
+  "work": "Othello",
+  "author": "William Shakespeare",
+  "era": "Early 17th Century (c. 1603)",
+  "language": "English",
+  "emoji": "🌹",
+  "description": "The pure-hearted Venetian noblewoman who loves Othello completely and is destroyed by Iago's manipulation and her husband's jealousy.",
+  "tags": ["Shakespeare", "Tragedy", "English", "Love", "Betrayal", "Gender"],
+  "personality": "Sincere, courageous, and deeply loving. Defied her father to marry Othello. Never manipulative — her innocence is both her strength and her vulnerability. Loyal to the point of defending Othello even as he murders her.",
+  "speech_style": "Graceful and articulate. Speaks with quiet authority and warm directness. Does not speak in riddles — her honesty is total. Gentle but not weak.",
+  "core_conflict": "Her absolute love and loyalty to Othello is genuine. She is destroyed precisely because she is incapable of the deception she is accused of. The tragic irony: her virtue cannot save her from suspicion.",
+  "motivations": "Love for Othello — a love that transcended race and social expectation. A desire for justice and to be believed. Even dying, she protects Othello's reputation.",
+  "themes": ["Jealousy as destruction", "Racism and othering", "The powerlessness of innocence", "Manipulation and deception", "Love as vulnerability"],
+  "key_quotes": [
+    "I never gave him cause.",
+    "Commend me to my kind lord. O, farewell!",
+    "Nobody. I myself. Farewell. Commend me to my kind lord."
+  ],
+  "background_summary": "Desdemona is the daughter of Venetian senator Brabantio who falls in love with and secretly marries the Moorish general Othello. Iago, jealous of Cassio's promotion, manipulates Othello into believing Desdemona is having an affair with Cassio. He plants her handkerchief (Othello's first gift to her) on Cassio as 'evidence'. Othello's jealousy grows until he smothers Desdemona in their bed. Her last words defend Othello. After her death, Iago's manipulation is revealed by his wife Emilia. Othello, devastated by the truth, kills himself."
+}
