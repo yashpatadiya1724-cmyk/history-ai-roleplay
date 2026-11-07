@@ -134,7 +134,7 @@ async def stream_chat(
     language: str,
     what_if_mode: bool,
 ) -> AsyncIterator[str]:
-    """Stream a character response from Ollama."""
+    """Stream a character response with Multi-Provider Support (Gemini, OpenAI, Ollama, Fallback)."""
     system_prompt = build_system_prompt(character, context_chunks, language, what_if_mode)
 
     messages = [{"role": "system", "content": system_prompt}]
@@ -143,6 +143,68 @@ async def stream_chat(
         messages.append({"role": turn["role"], "content": turn["content"]})
     messages.append({"role": "user", "content": message})
 
+    # Provider 1: Google Gemini (if GEMINI_API_KEY is configured)
+    gemini_key = os.getenv("GEMINI_API_KEY")
+    if gemini_key:
+        try:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:streamGenerateContent?key={gemini_key}&alt=sse"
+            gemini_contents = []
+            for turn in history[-6:]:
+                role = "user" if turn["role"] == "user" else "model"
+                gemini_contents.append({"role": role, "parts": [{"text": turn["content"]}]})
+            gemini_contents.append({"role": "user", "parts": [{"text": message}]})
+            
+            payload = {
+                "system_instruction": {"parts": [{"text": system_prompt}]},
+                "contents": gemini_contents,
+                "generationConfig": {"temperature": 0.7, "maxOutputTokens": 400}
+            }
+            async with httpx.AsyncClient(timeout=60.0) as client:
+                async with client.stream("POST", url, json=payload) as response:
+                    if response.status_code == 200:
+                        async for line in response.aiter_lines():
+                            if line.startswith("data: "):
+                                try:
+                                    data = json.loads(line[6:])
+                                    for cand in data.get("candidates", []):
+                                        for part in cand.get("content", {}).get("parts", []):
+                                            text = part.get("text", "")
+                                            if text:
+                                                yield text
+                                except Exception:
+                                    continue
+                        return
+        except Exception:
+            pass
+
+    # Provider 2: OpenAI (if OPENAI_API_KEY is configured)
+    openai_key = os.getenv("OPENAI_API_KEY")
+    if openai_key:
+        try:
+            url = "https://api.openai.com/v1/chat/completions"
+            headers = {"Authorization": f"Bearer {openai_key}"}
+            payload = {
+                "model": os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
+                "messages": messages,
+                "stream": True,
+            }
+            async with httpx.AsyncClient(timeout=60.0) as client:
+                async with client.stream("POST", url, headers=headers, json=payload) as response:
+                    if response.status_code == 200:
+                        async for line in response.aiter_lines():
+                            if line.startswith("data: ") and not line.endswith("[DONE]"):
+                                try:
+                                    data = json.loads(line[6:])
+                                    token = data.get("choices", [{}])[0].get("delta", {}).get("content", "")
+                                    if token:
+                                        yield token
+                                except Exception:
+                                    continue
+                        return
+        except Exception:
+            pass
+
+    # Provider 3: Local Ollama (default local engine)
     active_model = get_best_ollama_model()
 
     payload = {
