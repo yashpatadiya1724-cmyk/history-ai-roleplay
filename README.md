@@ -1,139 +1,114 @@
+# 📚 History AI Roleplay — LitEra Classical Literature Time Capsule
 
-# 📚 LitEra — Literature Time Capsule
+[![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-2.0-009688?logo=fastapi)](https://fastapi.tiangolo.com)
+[![React](https://img.shields.io/badge/React-19.2-61DAFB?logo=react)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?logo=typescript)](https://www.typescriptlang.org)
+[![Vite](https://img.shields.io/badge/Vite-8.3-646CFF?logo=vite)](https://vitejs.dev)
+[![Docker](https://img.shields.io/badge/Docker%20Compose-Ready-2496ED?logo=docker)](https://docker.com)
 
-> **Chat live with classical literary characters. Upload any book. Ask in any language.**
+> **History AI Roleplay (LitEra)** is a full-stack, persona-grounded AI companion engine that transforms classical world and Indian literature into real-time, interactive conversations. Talk directly to historical and literary figures like **Hamlet, Devdas, Shakuntala, Sita, Hori, Meghnad, Charandas Chor, and Jogidas Khuman**.
 
-LitEra is an AI-powered web application that transforms classical literature into real-time, persona-grounded conversations. Instead of passively reading a 300-page text, students open a chat window and talk directly to characters like Hamlet, Devdas, Charandas Chor, Shakuntala, and more.
+---
 
-## ✨ Features
+## ✨ Key Features
 
-- **9 Pre-Built Characters**: Hamlet, Devdas, Charandas Chor, Shakuntala, Hori (Godan), Jogidas Khuman (Meghani's Saurashtrani Rasdhar), Desdemona, Sita, Meghnad
-- **RAG-Powered Responses**: Upload PDFs, paste text, or share URLs — the character draws from your content
-- **Streaming Chat**: Real-time SSE streaming with Ollama (100% local, no API key required)
-- **Multilingual**: Ask in English, हिंदी, or ગુજરાતી — auto-detected, character responds in kind
-- **What If? Mode**: Explore alternate ethical scenarios and counterfactual story paths
-- **Literary Context Panel**: Character conflicts, themes, and key quotes always available
-- **Dashboard**: System status, Ollama health, knowledge base metrics
+- **🎭 Persona-Grounded Characters:**
+  - *Western Classics:* Hamlet (Shakespeare), Desdemona (Othello).
+  - *Indian Epics & Literature:* Devdas (Sarat Chandra), Shakuntala (Kalidasa), Sita (Ramayana), Meghnad (Meghnad Badh Kavya), Hori (Munshi Premchand's *Godan*), Charandas Chor (Habib Tanvir), Jogidas Khuman (Zaverchand Meghani's *Saurashtrani Rasdhar*).
+- **🤖 Multi-Provider LLM Streaming:**
+  - **Google Gemini 1.5 Flash:** Native SSE streaming using `GEMINI_API_KEY`.
+  - **OpenAI GPT-4o-mini:** Streaming via `OPENAI_API_KEY`.
+  - **Local Ollama:** 100% offline private inference (`llama3`, `mistral`, `phi3`).
+  - **Literary Fallback Simulation:** Built-in algorithmic fallback when no LLM key or Ollama is online.
+- **📚 Retrieval-Augmented Generation (RAG):**
+  - Ingest PDFs, text passages, and research URLs into persistent **ChromaDB** vector storage using `sentence-transformers`.
+- **🌐 Multilingual Intelligence:**
+  - Real-time language detection across **English, Hindi (हिंदी), and Gujarati (ગુજરાતી)**.
+- **🔮 "What If?" Scenario Explorer:**
+  - Counterfactual story engine testing ethical dilemmas and alternate story endings.
+- **🐳 1-Click Docker Compose Deployment:**
+  - Pre-configured multi-container stack for Backend, Nginx-proxied Frontend, and Ollama service.
 
-## 🛠️ Tech Stack
+---
 
-| Layer | Technology |
-|---|---|
-| Frontend | Next.js 14, TailwindCSS, TypeScript |
-| Backend | FastAPI, Python 3.10+ |
-| LLM | Ollama (Llama 3, Mistral, etc.) — local, no API key |
-| Vector DB | ChromaDB (persistent) |
-| Embeddings | sentence-transformers (all-MiniLM-L6-v2) |
-| PDF Parser | PyMuPDF (fitz) |
-| Web Scraper | BeautifulSoup4 + requests |
+## 🛠️ Tech Stack Architecture
 
-## 📦 Getting Started
+| Layer | Technologies |
+| :--- | :--- |
+| **Frontend** | React 19, TypeScript, Vite 8, TailwindCSS 4, Lucide Icons, Canvas Confetti |
+| **Backend** | Python 3.11, FastAPI (Lifespan Context), Pydantic, HTTPX, SQLite |
+| **Vector DB / RAG** | ChromaDB, Sentence-Transformers (`all-MiniLM-L6-v2`), PyMuPDF, BeautifulSoup4 |
+| **LLM Support** | Google Gemini API, OpenAI API, Ollama (Llama 3 / Mistral) |
+| **DevOps** | Docker, Docker Compose, Multi-stage Nginx builds |
 
-### Prerequisites
+---
 
-- **Python 3.10+**
-- **Node.js 18+**
-- **[Ollama](https://ollama.ai)** installed and running
+## 🚀 Quick Start (Docker)
 
-### 1. Install Ollama & a Model
+Run the complete frontend, backend, and vector database with one command:
 
 ```bash
-# Install Ollama from https://ollama.ai (auto-installs on Windows/Mac)
-ollama pull llama3        # or: mistral, phi3, gemma2
-ollama serve              # starts on http://localhost:11434
+docker compose up --build
 ```
+- **Web App:** `http://localhost:3000`
+- **Backend API & Swagger Docs:** `http://localhost:8000/docs`
 
-### 2. Backend Setup
+---
+
+## 💻 Manual Setup
+
+### 1. Backend Setup
 
 ```bash
 cd backend
+
+# Create virtual environment
+python -m venv venv
+venv\Scripts\activate       # On Windows (or source venv/bin/activate on Linux/Mac)
+
+# Install dependencies
 pip install -r requirements.txt
-uvicorn main:app --reload
-# API runs on http://localhost:8000
+
+# Run automated tests
+pytest test_api.py
+
+# Launch FastAPI server
+uvicorn main:app --reload --port 8000
 ```
 
-### 3. Frontend Setup
+### 2. Frontend Setup
 
 ```bash
 cd frontend
+
+# Install Node packages
 npm install
+
+# Start Vite development server
 npm run dev
-# App runs on http://localhost:3000
-```
-
-## 🎮 How to Use
-
-1. **Open** `http://localhost:3000`
-2. **Browse** the Character Library → click a character
-3. **Upload** a PDF, paste text, or add a URL (optional but recommended)
-4. **Chat** freely in English, Hindi, or Gujarati
-5. **Toggle "What If?"** to explore alternate scenarios
-
-## 📁 Project Structure
-
-```
-history-ai-roleplay/
-├── backend/
-│   ├── main.py               # FastAPI — all endpoints
-│   ├── character_engine.py   # Persona prompts + Ollama streaming
-│   ├── rag_engine.py         # ChromaDB ingestion & retrieval
-│   ├── language_utils.py     # Language detection
-│   ├── database.py           # SQLite — conversations & uploads
-│   ├── characters/           # Character JSON profiles
-│   │   ├── hamlet.json
-│   │   ├── devdas.json
-│   │   └── ...
-│   └── requirements.txt
-├── frontend/
-│   ├── src/app/
-│   │   ├── page.tsx          # Landing page
-│   │   ├── characters/       # Character library
-│   │   ├── chat/[id]/        # Chat room per character
-│   │   └── dashboard/        # System status
-│   └── src/components/
-│       └── Navbar.tsx
-└── README.md
-```
-
-## 🔧 Configuration
-
-| Environment Variable | Default | Description |
-|---|---|---|
-| `OLLAMA_BASE_URL` | `http://localhost:11434` | Ollama server URL |
-| `OLLAMA_MODEL` | `llama3` | Model to use |
-| `NEXT_PUBLIC_API_URL` | `http://localhost:8000` | Backend URL for frontend |
-
-Set `OLLAMA_MODEL` in your shell before starting backend:
-```bash
-set OLLAMA_MODEL=mistral   # Windows
-export OLLAMA_MODEL=mistral # Unix
-```
-
-## ➕ Adding Custom Characters
-
-Drop a `.json` file in `backend/characters/` following this schema:
-
-```json
-{
-  "id": "my_character",
-  "name": "Character Name",
-  "work": "Book Title",
-  "author": "Author Name",
-  "era": "Year or Period",
-  "language": "Primary Language",
-  "emoji": "🎭",
-  "description": "Short description",
-  "tags": ["Tag1", "Tag2"],
-  "personality": "Personality traits",
-  "speech_style": "How they speak",
-  "core_conflict": "Central dramatic tension",
-  "motivations": "What drives them",
-  "themes": ["Theme 1", "Theme 2"],
-  "key_quotes": ["Quote 1"],
-  "background_summary": "Full plot summary"
-}
+# Running on http://localhost:5173 (or http://localhost:3000)
 ```
 
 ---
 
-Created with ❤️ for literature education. Built on Ollama + ChromaDB + FastAPI + Next.js.
+## 🔑 Environment Variables (Optional)
+
+Create `.env` in `backend/`:
+```env
+# Optional: Use Google Gemini 1.5 Flash
+GEMINI_API_KEY=your_gemini_api_key_here
+
+# Optional: Use OpenAI
+OPENAI_API_KEY=your_openai_api_key_here
+
+# Local Ollama (default if keys are not set)
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=llama3
+```
+
+---
+
+## 📄 License
+
+Licensed under the MIT License.
