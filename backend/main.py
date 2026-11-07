@@ -12,6 +12,7 @@ from fastapi import FastAPI, HTTPException, UploadFile, File, Form, BackgroundTa
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
+from contextlib import asynccontextmanager
 from typing import Optional
 
 from database import (
@@ -36,7 +37,14 @@ try:
 except Exception:
     LEGACY_AVAILABLE = False
 
-app = FastAPI(title="LitEra API", version="2.0.0")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    create_tables()
+    yield
+
+
+app = FastAPI(title="LitEra API", version="2.0.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -48,11 +56,6 @@ app.add_middleware(
 
 # In-memory game sessions (legacy)
 game_sessions = {}
-
-
-@app.on_event("startup")
-def on_startup():
-    create_tables()
 
 
 # ============================================================
