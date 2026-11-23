@@ -21,31 +21,10 @@ except ImportError:
     HAS_CHROMA = False
     chromadb = None
 
-try:
-    from sentence_transformers import SentenceTransformer
-    HAS_TRANSFORMERS = True
-except ImportError:
-    HAS_TRANSFORMERS = False
-    SentenceTransformer = None
-
-# Try to import optional parsers
-try:
-    import fitz  # PyMuPDF
-    HAS_PDF = True
-except ImportError:
-    HAS_PDF = False
-
-try:
-    import requests
-    from bs4 import BeautifulSoup
-    HAS_WEB = True
-except ImportError:
-    HAS_WEB = False
-
 # ---------- Config ----------
 CHROMA_PATH = Path(__file__).parent / "chroma_db"
-EMBED_MODEL = "all-MiniLM-L6-v2"  # fast, small, good multilingual
-CHUNK_SIZE = 400    # characters
+EMBED_MODEL = "all-MiniLM-L6-v2"
+CHUNK_SIZE = 400
 CHUNK_OVERLAP = 80
 
 # ---------- Globals ----------
@@ -55,10 +34,12 @@ _chroma_client = None
 
 def get_embed_model():
     global _embed_model
-    if not HAS_TRANSFORMERS:
-        return None
     if _embed_model is None:
-        _embed_model = SentenceTransformer(EMBED_MODEL)
+        try:
+            from sentence_transformers import SentenceTransformer
+            _embed_model = SentenceTransformer(EMBED_MODEL)
+        except ImportError:
+            return None
     return _embed_model
 
 

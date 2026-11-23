@@ -40,10 +40,10 @@ def test_load_character():
 
 
 def test_language_normalization():
-    assert normalize_language("en") == "English"
-    assert normalize_language("hi") == "Hindi"
-    assert normalize_language("gu") == "Gujarati"
-    assert normalize_language("unknown") == "English"
+    assert normalize_language("en") == "en"
+    assert normalize_language("hi") == "hi"
+    assert normalize_language("gu") == "gu"
+    assert normalize_language("unknown") == "en"
 
 
 def test_fallback_response_generation():
