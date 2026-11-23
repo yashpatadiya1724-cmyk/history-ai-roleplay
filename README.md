@@ -1,5 +1,7 @@
 # 📚 History AI Roleplay — LitEra Classical Literature Time Capsule
 
+[![CI](https://github.com/yashpatadiya1724-cmyk/history-ai-roleplay/actions/workflows/ci.yml/badge.svg)](https://github.com/yashpatadiya1724-cmyk/history-ai-roleplay/actions/workflows/ci.yml)
+[![Sponsor](https://img.shields.io/badge/Sponsor-yashpatadiya1724--cmyk-ea4aaa?style=flat&logo=github-sponsors)](https://github.com/sponsors/yashpatadiya1724-cmyk)
 [![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-2.0-009688?logo=fastapi)](https://fastapi.tiangolo.com)
 [![React](https://img.shields.io/badge/React-19.2-61DAFB?logo=react)](https://react.dev)
