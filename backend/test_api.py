@@ -61,3 +61,22 @@ def test_fallback_response_generation():
     assert isinstance(response, str)
     assert len(response) > 20
     assert "Hamlet" in response or "question" in response or "soul" in response or "thought" in response
+
+
+def test_entity_extractor():
+    from entity_extractor import extract_entities
+    ents = extract_entities("William Shakespeare lived in Stratford-upon-Avon.")
+    assert isinstance(ents, list)
+
+
+def test_story_generator_structure():
+    from story_generator import generate_story
+    sample_entities = [
+        {"text": "Julius Caesar", "label": "PERSON"},
+        {"text": "Rome", "label": "GPE"}
+    ]
+    story = generate_story(sample_entities)
+    assert "title" in story
+    assert "scenes" in story
+    assert len(story["scenes"]) >= 2
+    assert "choices" in story["scenes"][0]
