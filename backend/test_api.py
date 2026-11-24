@@ -44,6 +44,45 @@ def test_language_normalization():
     assert normalize_language("hi") == "hi"
     assert normalize_language("gu") == "gu"
     assert normalize_language("unknown") == "en"
+    assert normalize_language("Gujarati") == "gu"
+    assert normalize_language("HINDI") == "hi"
+    assert normalize_language("English") == "en"
+
+
+def test_multilingual_unicode_script_detection():
+    # Hindi Devanagari detection
+    hindi_text = "नमस्ते, आप कैसे हैं? मुझे भारतीय इतिहास के बारे में बताइए।"
+    assert detect_language(hindi_text) == "hi"
+
+    # Gujarati script detection
+    gujarati_text = "નમસ્તે, તમે કેમ છો? મને ઇતિહાસ વિશે જણાવો."
+    assert detect_language(gujarati_text) == "gu"
+
+    # English Latin detection
+    english_text = "Greetings noble traveler, what brings you to our kingdom?"
+    assert detect_language(english_text) == "en"
+
+    # Auto-detect normalization fallback
+    assert normalize_language("auto", text=hindi_text) == "hi"
+    assert normalize_language("auto", text=gujarati_text) == "gu"
+
+
+def test_character_profiles_schema_integrity():
+    chars = list_characters()
+    assert len(chars) > 0
+    for entry in chars:
+        char_id = entry["id"]
+        profile = load_character(char_id)
+        assert profile is not None, f"Character {char_id} must load successfully"
+        assert "name" in profile and profile["name"]
+        assert "work" in profile
+        assert "author" in profile
+        assert "personality" in profile
+        assert "speech_style" in profile
+
+
+def test_nonexistent_character_returns_none():
+    assert load_character("non_existent_hero_404") is None
 
 
 def test_fallback_response_generation():
