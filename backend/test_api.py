@@ -145,11 +145,12 @@ def test_api_character_routes(client):
 
 
 def test_database_persistence_and_retrieval():
+    import uuid
     from database import create_tables, save_message, get_conversation_history, log_upload, get_uploads_for_character
     create_tables()
 
-    test_session = "sess_ci_test_123"
-    test_char = "hamlet"
+    test_session = f"sess_ci_test_{uuid.uuid4().hex[:8]}"
+    test_char = f"hamlet_{uuid.uuid4().hex[:6]}"
 
     # Save user message
     save_message(test_session, test_char, "user", "What is nobility?", "en", False)
@@ -166,7 +167,41 @@ def test_database_persistence_and_retrieval():
     # Log upload and retrieve
     log_upload(test_char, "text", "The Tragedy of Hamlet", 15)
     uploads = get_uploads_for_character(test_char)
-    assert len(uploads) >= 1
+    assert len(uploads) == 1
     assert uploads[0]["source_label"] == "The Tragedy of Hamlet"
     assert uploads[0]["chunk_count"] == 15
+
+
+def test_rag_chunking_and_deduplication():
+    from rag_engine import chunk_text
+
+    # Empty text returns empty chunks
+    assert chunk_text("") == []
+    assert chunk_text("   \n\t  ") == []
+
+    # Short text within single chunk
+    short_text = "Alexander the Great invaded the Persian Empire in 334 BC."
+    single_chunks = chunk_text(short_text, chunk_size=200, overlap=50)
+    assert len(single_chunks) == 1
+    assert single_chunks[0] == short_text
+
+    # Multi-chunk text with overlap
+    long_text = "Word " * 150
+    chunks = chunk_text(long_text, chunk_size=100, overlap=20)
+    assert len(chunks) > 1
+    for c in chunks:
+        assert len(c) <= 100
+        assert c.strip() != ""
+
+
+def test_rag_knowledge_base_info_and_lifecycle():
+    from rag_engine import get_knowledge_base_info, clear_knowledge_base
+
+    info = get_knowledge_base_info("non_existent_hero_123")
+    assert info["character_id"] == "non_existent_hero_123"
+    assert info["has_knowledge"] is False
+    assert info["chunk_count"] == 0
+
+    cleared = clear_knowledge_base("non_existent_hero_123")
+    assert isinstance(cleared, bool)
 
