@@ -119,3 +119,54 @@ def test_story_generator_structure():
     assert "scenes" in story
     assert len(story["scenes"]) >= 2
     assert "choices" in story["scenes"][0]
+
+
+def test_api_character_routes(client):
+    # Test GET /characters/
+    res = client.get("/characters/")
+    assert res.status_code == 200
+    chars = res.json()
+    assert isinstance(chars, list)
+    assert len(chars) > 0
+
+    first_id = chars[0]["id"]
+
+    # Test GET /characters/{id}
+    char_res = client.get(f"/characters/{first_id}")
+    assert char_res.status_code == 200
+    char_data = char_res.json()
+    assert char_data["id"] == first_id
+    assert "name" in char_data
+    assert "knowledge_base" in char_data
+
+    # Test GET /characters/non_existent_404
+    missing_res = client.get("/characters/non_existent_unknown_99")
+    assert missing_res.status_code == 404
+
+
+def test_database_persistence_and_retrieval():
+    from database import create_tables, save_message, get_conversation_history, log_upload, get_uploads_for_character
+    create_tables()
+
+    test_session = "sess_ci_test_123"
+    test_char = "hamlet"
+
+    # Save user message
+    save_message(test_session, test_char, "user", "What is nobility?", "en", False)
+    # Save character response with What-If mode
+    save_message(test_session, test_char, "assistant", "Nobility is but a fragile crown.", "en", True)
+
+    history = get_conversation_history(test_session, limit=10)
+    assert len(history) == 2
+    assert history[0]["role"] == "user"
+    assert history[0]["content"] == "What is nobility?"
+    assert history[1]["role"] == "assistant"
+    assert history[1]["what_if_mode"] == 1
+
+    # Log upload and retrieve
+    log_upload(test_char, "text", "The Tragedy of Hamlet", 15)
+    uploads = get_uploads_for_character(test_char)
+    assert len(uploads) >= 1
+    assert uploads[0]["source_label"] == "The Tragedy of Hamlet"
+    assert uploads[0]["chunk_count"] == 15
+
